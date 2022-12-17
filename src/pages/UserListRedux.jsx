@@ -1,40 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUsers } from '../redux/features/users'
 import axios from 'axios'
 
-function UserList() {
+function UserListRedux() {
   const api = 'https://jsonplaceholder.typicode.com/users'
 
-  const [state, setState] = useState({
-    users : [],
-    isLoading : false,
-    errorMessage : null
-  })
-
-  const { users, isLoading, errorMessage } = state
+  const { users, isLoading, errorMessage } = useSelector((state) => state.user)
+  const dispatch = useDispatch()  
   useEffect( () => {
-    setState({
-      ...state,
-      isLoading : true
-    })
-    fetchUsers()
+    dispatch(getUsers())
   }, [])
-
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get(api)
-      setState({
-        ...state,
-        users: response.data,
-        isLoading : false
-      })
-    } catch (error) {
-      setState({
-        ...state,
-        errorMessage: error,
-        isLoading : false
-      })
-    }
-  } 
 
   return <>
     <div className="container mt-3">
@@ -50,7 +26,7 @@ function UserList() {
             isLoading && <>Loading...</>
           }
           {
-            !isLoading && errorMessage && <p className="h3">{errorMessage}</p> 
+            !isLoading && errorMessage && <p className="h3 text-danger">{errorMessage}</p> 
           }
           {
             !isLoading && users.length > 0 && <>
@@ -88,4 +64,4 @@ function UserList() {
   </>
 }
 
-export default UserList
+export default UserListRedux
